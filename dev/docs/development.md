@@ -1,6 +1,6 @@
 # Development & Testing
 
-All development on BookStack is currently done on the `development` branch. 
+All development on BookStack is currently done on the `development` branch.
 When it's time for a release the `development` branch is merged into release with built & minified CSS & JS then tagged at its version. Here are the current development requirements:
 
 * [Node.js](https://nodejs.org/en/) v18.0+
@@ -25,7 +25,7 @@ npm run dev
 
 Further details about the BookStack JavaScript codebase can be found in the [javascript-code.md document](javascript-code.md).
 
-## Automated App Testing 
+## Automated App Testing
 
 BookStack has a large suite of PHP tests to cover application functionality. We try to ensure that all additions and changes to the platform are covered with testing.
 
@@ -75,10 +75,12 @@ This repository ships with a Docker Compose configuration intended for developme
 
 To get started, make sure you meet the following requirements:
 
-- Docker and Docker Compose are installed
-- Your user is part of the `docker` group
+* Docker and Docker Compose are installed
+* Your user is part of the `docker` group
 
 If all the conditions are met, you can proceed with the following steps:
+
+##### OS: Unix/Linux:
 
 1. **Copy `.env.example` to `.env`**, change `APP_KEY` to a random 32 char string and set `APP_ENV` to `local`.
 2. Make sure **port 8080 is unused** *or else* change `DEV_PORT` to a free port on your host.
@@ -93,6 +95,32 @@ docker-compose run app php artisan list
 ```
 
 The docker-compose setup runs an instance of [MailHog](https://github.com/mailhog/MailHog) and sets environment variables to redirect any BookStack-sent emails to MailHog. You can view this mail via the MailHog web interface on `localhost:8025`. You can change the port MailHog is accessible on by setting a `DEV_MAIL_PORT` environment variable.
+
+##### OS: Windows:
+
+If you're using Windows with VS Code and Docker Desktop, the command `chgrp -R docker storage` from the development instructions you've selected is not directly applicable, as `chgrp` is a Unix/Linux command and doesn't work on Windows, even in a Bash terminal provided by Git Bash, WSL, or similar.
+
+For Docker Desktop on Windows, file permissions are handled differently, and you typically don't need to manually change group ownership to ensure that containers can write to volumes or bind mounts. Docker Desktop handles the translation of permissions between Windows and Linux containers.
+
+However, if you're using WSL (Windows Subsystem for Linux) and your project is within the Linux filesystem, you might still need to ensure proper permissions. In that case, or if you're trying to mimic the permission change behavior, you can follow these steps:
+
+1. **Ensure `.env` Configuration**: Copy `.env.example` to `.env`, set `APP_KEY` to a random 32-character string, and ensure `APP_ENV` is set to `local`.
+
+2. **Port Availability**: Ensure port 8080 is free or change `DEV_PORT` in your `.env` file to a port that is free.
+
+3. **Handling Storage Permissions**: On Windows, you typically won't face the same permissions issue with Docker Desktop. If you encounter permissions issues with the `storage` directory:
+   * Ensure your Docker Desktop settings allow sharing of the drive where your project is located.
+   * If using WSL, you might adjust permissions within the WSL environment, but this is often unnecessary with Docker Desktop's handling of permissions.
+
+4. **Running Docker Compose**: Use Docker Desktop and VS Code's terminal to run:
+
+   ```bash
+   docker-compose up
+   ```
+
+   This command starts your containers as defined in your `docker-compose.yml` file. Docker Desktop should handle the permissions appropriately for shared volumes or bind mounts.
+
+If you encounter specific permission issues with files created by Docker containers on Windows, you might need to adjust the Docker Desktop settings or review how your containers are configured to manage files and directories on shared volumes. Docker Desktop's integration with Windows generally abstracts away the need for manual permission management as seen on Linux systems.
 
 ### Running tests
 
